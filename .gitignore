@@ -1,0 +1,36 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment
+.env
+*.env
+*.venv/
+.venv/
+env/
+venv/
+
+# Data
+data/
+*.csv
+*.tsv
+*.json
+*.npy
+*.h5
+*.pt
+*.pkl
+*.joblib
+
+# Logs and outputs
+*.log
+*.out
+*.ckpt
+runs/
+tensorboard/
+
+# System
+.DS_Store
