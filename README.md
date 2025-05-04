@@ -3,66 +3,86 @@
 This repo is a collection of scripts showing how to install [JoeyNMT](https://github.com/joeynmt/joeynmt), download
 data and train & evaluate models, as well as the necessary data for training your own model
 
-# Requirements
-
-- This only works on a Unix-like system, with bash.
-- Python 3.10 must be installed on your system, i.e. the command `python3` must be available
-- Make sure virtualenv is installed on your system. To install, e.g.
-
-    `pip install virtualenv`
-
-# Steps for macOS & Linux users
-
-Clone this repository or your fork thereof in the desired place:
-
-    git clone https://github.com/marpng/mt-exercise-03
-
-Create a new virtualenv that uses Python 3. Please make sure to run this command outside of any virtual Python environment:
-
-    ./scripts/make_virtualenv.sh
-
-**Important**: Then activate the env by executing the `source` command that is output by the shell script above.
-
-Make sure to install the exact software versions specified in the the exercise sheet before continuing.
-
-Download Moses for post-processing:
-
-    ./scripts/download_install_packages.sh
-
-
-Train a model:
-
-    ./scripts/train.sh
-
-The training process can be interrupted at any time, and the best checkpoint will always be saved. It is also possible to continue training from there later on.
-
-# Steps for Windows users
-
-This repo relies on Bash scripts (.sh files), which do not run natively on Windows (CMD or PowerShell).  
-Here are two ways to make it work:
-
-Option 1: Use WSL (Windows Subsystem for Linux)
-Enable WSL and install Ubuntu: `wsl --install`
-
-Open Ubuntu from your Start menu.
-
-Inside the Ubuntu terminal, follow the exact same steps as shown above for macOS/Linux:
+## Repository Structure
+```md
+mt-exercise-03/ 
+├── configs/ 
+│ ├── baseline.log # Training log for the baseline model 
+│ ├── deen_transformer_regular.yaml # Configuration file for Pre-Norm and Post-Norm models 
+├── data/ 
+│ ├── codes3200.bpe # BPE codes for tokenization 
+│ ├── train/ # Training data │ 
+├── dev/ # Validation data 
+│ ├── test/ # Test data 
+├── logs/ 
+│ ├── deen_transformer_regular/ 
+│ ├── err_pre # Log file for the Pre-Norm model 
+│ ├── err_post # Log file for the Post-Norm model 
+├── models/ 
+│ ├── deen_transformer_pre/ # Model directory for Pre-Norm 
+│ ├── deen_transformer_post/ # Model directory for Post-Norm 
+├── scripts/ 
+│ ├── train.sh # Script to train the models 
+│ ├── visualize_results.py # Script to extract validation perplexities and visualize results 
+├── validation_perplexities.csv # Table of validation perplexities for all models
 ```
-git clone https://github.com/marpng/mt-exercise-4
-cd mt-exercise-4
-./scripts/make_virtualenv.sh
-./scripts/download_install_packages.sh
-./scripts/train.sh
-```     
+---
 
-Option 2: Manually run steps without shell scripts
-If you can't use WSL, you can recreate the process manually using PowerShell or CMD
-Create and activate a virtual environment:
-```
-python -m venv venv
-.\venv\Scripts\activate
+## Requirements
+
+- Python 3.8 or higher
+- Joey-NMT (v2.2.0)
+- Required Python libraries:
+  - `pandas`
+  - `matplotlib`
+
+Install the dependencies using:
+```bash
 pip install -r requirements.txt
 ```
-Manually download and install Moses and other dependencies (you'll need to look inside scripts/download_install_packages.sh to replicate its steps).
 
-Run the training logic by manually executing the code inside train.sh, or porting it to a Python script or notebook.
+## How to Run the Experiments
+1. Train the Models
+Run the training script for each model:
+
+```bash 
+scripts/train.sh
+```
+
+Ensure the configuration file (configs/`deen_transformer_regular.yaml`) is updated for Pre-Norm and Post-Norm setups.
+
+2. Extract Validation Perplexities
+Use the `visualize_results.py` script to extract validation perplexities and generate a table and plot:
+- Save the validation perplexities table as validation_perplexities.csv.
+- Save the validation perplexities plot as validation_perplexities.png.
+
+## Results
+#### Validation Perplexities Table
+The table below shows the validation perplexities for the Baseline, Pre-Norm, and Post-Norm models:
+
+|Steps	| Baseline	| Prenorm	|Postnorm|
+|-------|-----------|-----------|--------|
+|500	|56.61	|44.8	|41.5|
+|1000	|49.93	|30.68	|30.22|
+|1500	|45.33	|26.34	|27.02|
+|...	|...	|...	|...|
+
+
+#### Validation Perplexities Plot
+![validation_perplexities](https://github.com/user-attachments/assets/e12570a0-b477-4b9b-b676-c200800362e3)
+
+## Key Findings
+#### Pre-Norm vs Post-Norm:
+Pre-Norm consistently outperforms Post-Norm in terms of validation perplexity across all steps.
+- At step 15,000, Pre-Norm achieves a perplexity of 9.2, compared to 11.09 for Post-Norm.
+  
+Baseline Model:
+- The baseline model shows slower convergence and higher perplexities compared to both Pre-Norm and Post-Norm setups.
+  
+Alignment with Wang et al. (2019):
+- Our experiments confirm Wang et al.'s findings that Pre-Norm facilitates better optimization and performance, even in shallow networks and low-resource settings.
+
+## References
+Wang et al. (2019). [Learning Deep Transformer Models for Machine Translation](https://arxiv.org/abs/1906.01787)
+
+Joey-NMT [GitHub Repository](https://github.com/joeynmt/joeynmt)
